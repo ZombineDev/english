@@ -10,23 +10,32 @@ length of the slice:
 
     T* ptr;
     size_t length; // unsigned 32 bit on 32bit, unsigned 64 bit on 64bit
+    
+Some of the advanteges of using slices are:
+* Allow efficient, zero-copy designs
+* Safer than raw pointers (bounds checked by default)
+* Cheap to pass around (8 or 16 bytes on most architectures, i.e. fit in two registers)
+* Convenient syntax
 
-### Getting a slice via new allocation
+### Creating dynamic arrays
 
-If a new dynamic array is created, a slice to this freshly
+When a new dynamic array is created, a slice to this freshly
 allocated memory is returned:
 
     auto arr = new int[5];
     assert(arr.length == 5); // memory referenced in arr.ptr
 
 Actual allocated memory in this case is completely managed by garbage
-collector, returned slice acts as a "view" on underlying elements.
+collector, and the returned slice acts as a "view" on the underlying elements.
 
-### Getting a slice to existing memory
+### Slicing existing arrays
 
-Using a slicing operator one can also get a slice pointing to some already
-existing memory. Slicing operator can be applied to another slice, static
-arrays, structs/classes implementing `opSlice` and few other entities.
+Since slices are just views over existing arrays, new views can easily be obtained
+by using the the slicing operator - `array[start .. end]`. This expression
+will return the following slice - `{ ptr: array.ptr + start, length: end - start }` -
+a slice ranging from `array[start]` to `array[end - start]`. The slicing operator
+can be applied to other slices, static arrays, structs/classes implementing `opSlice`
+and few other entities.
 
 In an example expression `origin[start .. end]` slicing operator is used to get
 a slice of all elements of `origin` from `start` to the element _before_ `end`:
